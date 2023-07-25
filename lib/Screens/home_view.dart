@@ -1,8 +1,11 @@
+import 'package:contact_app/Provider/Contact_view_provider.dart';
+import 'package:contact_app/Screens/contact_profile_view.dart';
 import 'package:contact_app/Utils/colors.dart';
 import 'package:contacts_service/contacts_service.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:provider/provider.dart';
 
 class HomeView extends StatefulWidget {
   const HomeView({super.key});
@@ -51,7 +54,7 @@ class _HomeViewState extends State<HomeView> {
     getContactPermission();
     search.addListener(() {
       filterContacts();
-      fetchTime();
+      // fetchTime();
     });
   }
 
@@ -73,6 +76,7 @@ class _HomeViewState extends State<HomeView> {
 
   @override
   Widget build(BuildContext context) {
+    List<Contact> profile = context.watch<ContactViewProvider>().profileContact;
     final screenHeight = MediaQuery.of(context).size.height;
     final screenWidth = MediaQuery.of(context).size.width;
     bool isSearching = search.text.isNotEmpty;
@@ -85,7 +89,7 @@ class _HomeViewState extends State<HomeView> {
           actions: [
             TextButton(
                 onPressed: () {
-                  fetchTime();
+                  // fetchTime();
                 },
                 child: Text(
                   currentTime,
@@ -98,8 +102,7 @@ class _HomeViewState extends State<HomeView> {
                 ))
           ],
           leading: IconButton(
-            onPressed: () {
-            },
+            onPressed: () {},
             icon: Icon(Icons.density_medium_outlined,
                 color: ColorConstant.iconColor),
           )),
@@ -190,7 +193,19 @@ class _HomeViewState extends State<HomeView> {
                                   ),
                                 ),
                                 child: ListTile(
-                                  onTap: () {
+                                  onTap: () async {
+                                    profile.clear();
+                                    if (!profile.contains(contact)) {
+                                      await context
+                                          .read<ContactViewProvider>()
+                                          .viewProfile(contact);
+                                      Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (context) =>
+                                                  const ContactProfile()));
+                                      print('profile:: $profile');
+                                    }
                                     // ignore: avoid_print
                                     print(contacts[index].displayName);
                                   },
