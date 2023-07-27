@@ -1,8 +1,8 @@
 import 'package:contact_app/Provider/Contact_view_provider.dart';
-import 'package:contact_app/Screens/home_view.dart';
 import 'package:contact_app/Utils/colors.dart';
 import 'package:contacts_service/contacts_service.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_phone_direct_caller/flutter_phone_direct_caller.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:line_icons/line_icon.dart';
 import 'package:provider/provider.dart';
@@ -23,30 +23,42 @@ class ContactProfile extends StatelessWidget {
       }
     }
 
+    Contact contact;
+
     List<Contact> profile = context.watch<ContactViewProvider>().profileContact;
-    return SafeArea(
-        child: Scaffold(
+    List<Contact> favourite =
+        context.watch<ContactViewProvider>().favouriteContact;
+    return Scaffold(
+      backgroundColor: ColorConstant.whiteColor,
       appBar: AppBar(
-        backgroundColor: Colors.white,
+        backgroundColor: ColorConstant.whiteColor,
         elevation: 0,
         actions: [
           IconButton(
               onPressed: () {},
               icon: Icon(
                 Icons.mode_edit_outlined,
-                color: ColorConstant.iconColor,
+                color: ColorConstant.textColor,
               )),
           IconButton(
-              onPressed: () {},
+              onPressed: () async {
+                profile.clear();
+                if (!favourite.contains(favourite.indexed)) {
+                  await context
+                      .read<ContactViewProvider>()
+                      .favouriteContacts(favourite.indexed);
+                  print('profile:: $favourite');
+                }
+              },
               icon: Icon(
                 Icons.star_border_outlined,
-                color: ColorConstant.iconColor,
+                color: ColorConstant.textColor,
               )),
           IconButton(
               onPressed: () {},
               icon: Icon(
                 Icons.more_vert_outlined,
-                color: ColorConstant.iconColor,
+                color: ColorConstant.textColor,
               )),
         ],
       ),
@@ -55,6 +67,7 @@ class ContactProfile extends StatelessWidget {
         child: ListView.builder(
           itemCount: profile.length,
           itemBuilder: (context, index) {
+            contact = profile[index];
             return Column(
               children: [
                 (profile[index].avatar != null &&
@@ -92,8 +105,8 @@ class ContactProfile extends StatelessWidget {
                     ],
                   ),
                 ),
-                Divider(
-                  height: 24,
+                const Divider(
+                  height: 18,
                   thickness: 1,
                 ),
                 Row(
@@ -109,21 +122,27 @@ class ContactProfile extends StatelessWidget {
                                 path:
                                     profile[index].phones![0].value.toString(),
                               );
-                              if (await canLaunchUrl(url)) {
-                                await launchUrl(url);
-                              } else {
-                                print('Cannot Launch Url');
-                              }
+                              bool? result =
+                                  await FlutterPhoneDirectCaller.callNumber(
+                                      profile[index]
+                                          .phones![0]
+                                          .value
+                                          .toString());
+                              // if (await canLaunchUrl(url)) {
+                              //   await launchUrl(url);
+                              // } else {
+                              //   print('Cannot Launch Url');
+                              // }
                             },
                             icon: const Icon(
                               Icons.call_outlined,
-                              size: 28,
+                              size: 24,
                               color: Color.fromARGB(255, 6, 56, 96),
                             )),
                         const Text(
                           'Call',
                           style: TextStyle(
-                              fontSize: 16,
+                              fontSize: 14,
                               letterSpacing: 0.5,
                               color: Color.fromARGB(255, 6, 56, 96)),
                         )
@@ -147,13 +166,13 @@ class ContactProfile extends StatelessWidget {
                             },
                             icon: const Icon(
                               Icons.message_outlined,
-                              size: 28,
+                              size: 24,
                               color: Color.fromARGB(255, 6, 56, 96),
                             )),
                         const Text(
                           'Text',
                           style: TextStyle(
-                              fontSize: 16,
+                              fontSize: 14,
                               letterSpacing: 0.5,
                               color: Color.fromARGB(255, 6, 56, 96)),
                         )
@@ -170,13 +189,13 @@ class ContactProfile extends StatelessWidget {
                               await launchUrl(url);
                             },
                             icon: const LineIcon.whatSApp(
-                              size: 36,
+                              size: 30,
                               color: Colors.green,
                             )),
                         const Text(
                           'Whatsapp',
                           style: TextStyle(
-                              fontSize: 16,
+                              fontSize: 14,
                               letterSpacing: 0.5,
                               color: Color.fromARGB(255, 6, 56, 96)),
                         )
@@ -185,7 +204,7 @@ class ContactProfile extends StatelessWidget {
                   ],
                 ),
                 const Divider(
-                  height: 24,
+                  height: 18,
                   thickness: 1,
                 ),
                 Padding(
@@ -193,7 +212,7 @@ class ContactProfile extends StatelessWidget {
                   child: Container(
                     height: 120,
                     decoration: BoxDecoration(
-                        color: Colors.blueGrey.shade100.withOpacity(0.50),
+                        color: ColorConstant.silverGreyColor,
                         borderRadius: BorderRadius.circular(16)),
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
@@ -227,11 +246,17 @@ class ContactProfile extends StatelessWidget {
                                             .value
                                             .toString(),
                                       );
-                                      if (await canLaunchUrl(url)) {
-                                        await launchUrl(url);
-                                      } else {
-                                        print('Cannot Launch Url');
-                                      }
+                                      bool? result =
+                                          await FlutterPhoneDirectCaller
+                                              .callNumber(profile[index]
+                                                  .phones![0]
+                                                  .value
+                                                  .toString());
+                                      // if (await canLaunchUrl(url)) {
+                                      //   await launchUrl(url);
+                                      // } else {
+                                      //   print('Cannot Launch Url');
+                                      // }
                                     },
                                     icon: const Icon(
                                       Icons.call_outlined,
@@ -242,7 +267,7 @@ class ContactProfile extends StatelessWidget {
                                   children: [
                                     SizedBox(
                                       width: 130,
-                                      child: Text(
+                                      child: SelectableText(
                                         profile[index].phones![0].value!,
                                         style: TextStyle(fontSize: 16),
                                       ),
@@ -309,6 +334,6 @@ class ContactProfile extends StatelessWidget {
           },
         ),
       ),
-    ));
+    );
   }
 }
