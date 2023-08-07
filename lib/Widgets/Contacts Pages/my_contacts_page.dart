@@ -20,16 +20,6 @@ class _MyContactsPageState extends State<MyContactsPage> {
   TextEditingController search = TextEditingController();
   var currentTime = '';
 
-  fetchTime() async {
-    var timePicker =
-        await showTimePicker(context: context, initialTime: TimeOfDay.now());
-    if (timePicker != null) {
-      setState(() {
-        currentTime = timePicker.format(context);
-      });
-    }
-  }
-
   void getContactPermission() async {
     if (await Permission.contacts.isGranted) {
       fetchContact();

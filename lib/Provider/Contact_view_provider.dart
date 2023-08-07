@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_phone_direct_caller/flutter_phone_direct_caller.dart';
 import 'package:intl/intl.dart';
 import 'package:line_icons/line_icon.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 class ContactViewProvider with ChangeNotifier {
   List<Contact> profileContact = [];
@@ -22,6 +23,8 @@ class ContactViewProvider with ChangeNotifier {
     favouriteContact.add(index);
     notifyListeners();
   }
+
+  
 
   // make a direct phone call
   Future<void> makeCall(index) async {

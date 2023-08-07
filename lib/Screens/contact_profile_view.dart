@@ -27,7 +27,7 @@ class ContactProfile extends StatelessWidget {
 
     List<Contact> profile = context.watch<ContactViewProvider>().profileContact;
     List<Contact> favourite =
-        context.watch<ContactViewProvider>().favouriteContact;
+        context.watch<ContactViewProvider>().profileContact;
     return Scaffold(
       backgroundColor: ColorConstant.whiteColor,
       appBar: AppBar(
@@ -41,14 +41,9 @@ class ContactProfile extends StatelessWidget {
                 color: ColorConstant.textColor,
               )),
           IconButton(
-              onPressed: () async {
-                profile.clear();
-                if (!favourite.contains(favourite.indexed)) {
-                  await context
-                      .read<ContactViewProvider>()
-                      .favouriteContacts(favourite.indexed);
-                  print('profile:: $favourite');
-                }
+              onPressed: () {
+                print('Profile::$profile');
+                print('Favourite::${favourite.first}');
               },
               icon: Icon(
                 Icons.star_border_outlined,
